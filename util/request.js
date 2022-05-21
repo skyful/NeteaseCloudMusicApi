@@ -1,5 +1,5 @@
 const encrypt = require('./crypto')
-const axios = require('axios')
+const axios = require('request')
 const PacProxyAgent = require('pac-proxy-agent')
 const http = require('http')
 const https = require('https')
@@ -150,49 +150,59 @@ const createRequest = (method, url, data, options) => {
         responseType: 'arraybuffer',
       }
     }
-    axios(settings)
-      .then((res) => {
-        const body = res.data
-        answer.cookie = (res.headers['set-cookie'] || []).map((x) =>
-          x.replace(/\s*Domain=[^(;|$)]+;*/, ''),
-        )
-        try {
-          if (options.crypto === 'eapi') {
-            answer.body = JSON.parse(encrypt.decrypt(body).toString())
-          } else {
-            answer.body = body
-          }
-
-          answer.status = answer.body.code || res.status
-          if (
-            [201, 302, 400, 502, 800, 801, 802, 803].indexOf(answer.body.code) >
-            -1
-          ) {
-            // 特殊状态码
-            answer.status = 200
-          }
-        } catch (e) {
-          // console.log(e)
-          try {
-            answer.body = JSON.parse(body.toString())
-          } catch (err) {
-            // console.log(err)
-            // can't decrypt and can't parse directly
-            answer.body = body
-          }
-          answer.status = res.status
-        }
-
-        answer.status =
-          100 < answer.status && answer.status < 600 ? answer.status : 400
-        if (answer.status === 200) resolve(answer)
-        else reject(answer)
+    console.log('----------------------request')
+    try {
+      axios(settings, (error, response, body) => {
+        console.log(error, response, body)
       })
-      .catch((err) => {
-        answer.status = 502
-        answer.body = { code: 502, msg: err }
-        reject(answer)
-      })
+      // axios(settings)
+      // .then((res) => {
+      //   console.log("请求成功",res)
+      //   const body = res.data
+      //   answer.cookie = (res.headers['set-cookie'] || []).map((x) =>
+      //     x.replace(/\s*Domain=[^(;|$)]+;*/, ''),
+      //   )
+      //   try {
+      //     if (options.crypto === 'eapi') {
+      //       answer.body = JSON.parse(encrypt.decrypt(body).toString())
+      //     } else {
+      //       answer.body = body
+      //     }
+
+      //     answer.status = answer.body.code || res.status
+      //     if (
+      //       [201, 302, 400, 502, 800, 801, 802, 803].indexOf(answer.body.code) >
+      //       -1
+      //     ) {
+      //       // 特殊状态码
+      //       answer.status = 200
+      //     }
+      //   } catch (e) {
+      //     // console.log(e)
+      //     try {
+      //       answer.body = JSON.parse(body.toString())
+      //     } catch (err) {
+      //       // console.log(err)
+      //       // can't decrypt and can't parse directly
+      //       answer.body = body
+      //     }
+      //     answer.status = res.status
+      //   }
+
+      //   answer.status =
+      //     100 < answer.status && answer.status < 600 ? answer.status : 400
+      //   if (answer.status === 200) resolve(answer)
+      //   else reject(answer)
+      // })
+      // .catch((err) => {
+      //   console.error("请求失败",res)
+      //   answer.status = 502
+      //   answer.body = { code: 502, msg: err }
+      //   reject(answer)
+      // })
+    } catch (e) {
+      console.error(e)
+    }
   })
 }
 
