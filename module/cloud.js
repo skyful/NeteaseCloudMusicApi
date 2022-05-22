@@ -2,6 +2,30 @@ const mm = require('music-metadata')
 const uploadPlugin = require('../plugins/songUpload')
 const md5 = require('md5')
 module.exports = async (query, request) => {
+  if (query.songID) {
+    const res3 = await request(
+      'POST',
+      `https://interface.music.163.com/api/cloud/pub/v2`,
+      {
+        songid: query.songID,
+      },
+      {
+        crypto: 'weapi',
+        cookie: query.cookie,
+        proxy: query.proxy,
+        realIP: query.realIP,
+      },
+    )
+    console.log({ res3 })
+    return {
+      status: 200,
+      body: {
+        ...res3.body,
+        // ...uploadInfo,
+      },
+      cookie: query.cookie,
+    }
+  }
   let ext = 'mp3'
   if (query.songFile.name.indexOf('flac') > -1) {
     ext = 'flac'
