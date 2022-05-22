@@ -177,6 +177,7 @@ module.exports = async (query, request) => {
       ...res.body,
       ...res3.body,
       // ...uploadInfo,
+      uploadSongID: res2.body.songId,
     },
     cookie: res.cookie,
   }
