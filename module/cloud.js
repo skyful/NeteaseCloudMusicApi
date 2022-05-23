@@ -2,7 +2,7 @@ const mm = require('music-metadata')
 const uploadPlugin = require('../plugins/songUpload')
 const md5 = require('md5')
 module.exports = async (query, request) => {
-  if (query.songID) {
+  if (query.songFile.songID) {
     const res3 = await request(
       'POST',
       `https://interface.music.163.com/api/cloud/pub/v2`,
