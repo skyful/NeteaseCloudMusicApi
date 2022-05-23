@@ -7,7 +7,7 @@ module.exports = async (query, request) => {
       'POST',
       `https://interface.music.163.com/api/cloud/pub/v2`,
       {
-        songid: query.songID,
+        songid: query.songFile.songID,
       },
       {
         crypto: 'weapi',
