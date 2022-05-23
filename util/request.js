@@ -150,11 +150,10 @@ const createRequest = (method, url, data, options) => {
         responseType: 'arraybuffer',
       }
     }
-    console.log('----------------------request')
+
     try {
       axios(settings)
         .then((res) => {
-          console.log('请求成功', res)
           const body = res.data
           answer.cookie = (res.headers['set-cookie'] || []).map((x) =>
             x.replace(/\s*Domain=[^(;|$)]+;*/, ''),
@@ -193,7 +192,7 @@ const createRequest = (method, url, data, options) => {
           else reject(answer)
         })
         .catch((err) => {
-          console.error('请求失败', res)
+          //console.error('请求失败', res)
           answer.status = 502
           answer.body = { code: 502, msg: err }
           reject(answer)
